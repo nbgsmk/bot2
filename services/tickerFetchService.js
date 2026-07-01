@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./configService');
 
-const getHistoryFilePath = () => path.join(__dirname, '../', config.historyFile);
+const getHistoryFilePath = () => path.join(__dirname, '../', config.historyFileJson);
+const getCsvFilePath = () => path.join(__dirname, '../', config.historyFileCsv);
 
 let history = [];
 
@@ -19,7 +20,7 @@ function loadHistory() {
       console.log(`[INIT] Loaded ${history.length} entries from ${filePath}`);
     }
   } catch (err) {
-    console.warn(`Warning: Could not load ${config.historyFile}, starting with empty history.`, err.message);
+    console.warn(`Warning: Could not load ${config.historyFileJson}, starting with empty history.`, err.message);
     history = [];
   }
 }
@@ -32,7 +33,44 @@ function saveHistory() {
   try {
     fs.writeFileSync(filePath, JSON.stringify(history, null, 2));
   } catch (err) {
-    console.error(`Error saving history file ${config.historyFile}:`, err.message);
+    console.error(`Error saving history file ${config.historyFileJson}:`, err.message);
+  }
+}
+
+/**
+ * Appends a single entry to the CSV file
+ */
+function saveToCsv(entry) {
+  const filePath = getCsvFilePath();
+  const symbols = config.symbols;
+  const isNewFile = !fs.existsSync(filePath);
+
+  try {
+    let csvLine = '';
+    if (isNewFile) {
+      // Create Header: timestamp, symbol1_open, symbol1_high, etc.
+      let header = 'timestamp';
+      symbols.forEach(s => {
+        const base = s.replace('USDT', '');
+        header += `,${base}_open,${base}_high,${base}_low,${base}_close,${base}_volume,${base}_trades`;
+      });
+      csvLine += header + '\n';
+    }
+
+    let row = entry.timestamp;
+    symbols.forEach(s => {
+      const data = entry[s];
+      if (data) {
+        row += `,${data.open},${data.high},${data.low},${data.close},${data.tradeVolume},${data.tradeCount}`;
+      } else {
+        row += ',,,,,,'; // 6 commas for the 6 fields
+      }
+    });
+    csvLine += row + '\n';
+
+    fs.appendFileSync(filePath, csvLine);
+  } catch (err) {
+    console.error(`Error appending to CSV file ${config.historyFileCsv}:`, err.message);
   }
 }
 
@@ -90,6 +128,7 @@ async function fetchData() {
     }
     
     saveHistory();
+    saveToCsv(entry);
     console.log(`[${timestamp}] Stored data for ${symbols.join(', ')}`);
     return results; // Return the raw results for debugging/testing
   } catch (err) {

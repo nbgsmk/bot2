@@ -19,7 +19,8 @@ class ConfigService {
     this.symbols = Array.isArray(rawConfig.symbols) ? rawConfig.symbols : ['BTCUSDT', 'ETHUSDT'];
     this.windowSize = typeof rawConfig.windowSize === 'string' ? rawConfig.windowSize : '24h';
     this.historyLimit = this._validateNumber(rawConfig.historyLimit, 100);
-    this.historyFile = typeof rawConfig.historyFile === 'string' ? rawConfig.historyFile : 'trade_history.json';
+    this.historyFileJson = typeof rawConfig.historyFileJson === 'string' ? rawConfig.historyFileJson : 'trade_history.json';
+    this.historyFileCsv = typeof rawConfig.historyFileCsv === 'string' ? rawConfig.historyFileCsv : 'trade_history.csv';
     this.displayDecimals = this._validateNumber(rawConfig.displayDecimals, 2);
   }
 
