@@ -1,7 +1,43 @@
 const https = require('https');
+const fs = require('fs');
+const path = require('path');
 const config = require('./configService');
 
-const history = [];
+const getHistoryFilePath = () => path.join(__dirname, '../', config.historyFile);
+
+let history = [];
+
+/**
+ * Loads history from the JSON file if it exists
+ */
+function loadHistory() {
+  const filePath = getHistoryFilePath();
+  try {
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, 'utf8');
+      history = JSON.parse(data);
+      console.log(`[INIT] Loaded ${history.length} entries from ${filePath}`);
+    }
+  } catch (err) {
+    console.warn(`Warning: Could not load ${config.historyFile}, starting with empty history.`, err.message);
+    history = [];
+  }
+}
+
+/**
+ * Saves current history to the JSON file
+ */
+function saveHistory() {
+  const filePath = getHistoryFilePath();
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(history, null, 2));
+  } catch (err) {
+    console.error(`Error saving history file ${config.historyFile}:`, err.message);
+  }
+}
+
+// Initialize history on module load
+loadHistory();
 
 async function fetchData() {
   const symbols = config.symbols;
@@ -34,9 +70,13 @@ async function fetchData() {
     
     results.forEach(res => {
       const baseSymbol = res.symbol.replace('USDT', '').toLowerCase();
-      entry[`${baseSymbol}Price`] = res.json.lastPrice;
-      entry[`${baseSymbol}Volume`] = res.json.volume;
-      entry[`${baseSymbol}Trades`] = res.json.count;
+      entry[`${baseSymbol}_open`] = res.json.openPrice;
+      entry[`${baseSymbol}_high`] = res.json.highPrice;
+      entry[`${baseSymbol}_low`] = res.json.lowPrice;
+      entry[`${baseSymbol}_close`] = res.json.lastPrice;
+      entry[`${baseSymbol}_priceChange`] = res.json.priceChange;
+      entry[`${baseSymbol}_volume`] = res.json.volume;
+      entry[`${baseSymbol}_tradeCount`] = res.json.count;
     });
 
     history.push(entry);
@@ -46,6 +86,8 @@ async function fetchData() {
     if (history.length > limit) {
       history.shift();
     }
+    
+    saveHistory();
     console.log(`[${timestamp}] Stored data for ${symbols.join(', ')}`);
   } catch (err) {
     console.error('Error fetching from Binance:', err.message);
