@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>History of <%= symbol %> prices and volume (updated every <%= intervalMinutes %> minutes)</p>
+    
+    <% if (history && history.length > 0) { %>
+      <table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Price (USDT)</th>
+            <th>24h Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% history.reverse().forEach(function(entry) { %>
+            <tr>
+              <td><%= entry.timestamp %></td>
+              <td><%= entry.price %></td>
+              <td><%= entry.volume %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>No data stored yet. Please wait for the first fetch or refresh the page.</p>
+    <% } %>
+  </body>
+</html>

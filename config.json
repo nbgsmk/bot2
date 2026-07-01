@@ -1,0 +1,5 @@
+{
+  "fetchIntervalSeconds": 10,
+  "symbol": "BTCUSDT",
+  "historyLimit": 100
+}
