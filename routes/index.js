@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
   res.render('index', {
     title: 'Price History',
     history: history,
+    symbols: config.symbols,
     intervalMinutes: config.intervalMinutes,
     displayDecimals: config.displayDecimals,
     windowSize: config.windowSize

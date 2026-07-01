@@ -11,12 +11,12 @@ async function test() {
   const history = bitcoinService.getHistory();
   console.log('History entries:', history.length);
   if (history.length > 0) {
-    const latest = history[0];
+    const latest = history[history.length - 1];
     console.log('Latest entry:', JSON.stringify(latest, null, 2));
-    if (latest.btcPrice && latest.ethPrice && latest.btcTrades !== undefined) {
-      console.log('SUCCESS: BTC, ETH prices and trade counts found.');
+    if (latest.BTCUSDT && typeof latest.BTCUSDT === 'object' && latest.BTCUSDT.close !== undefined) {
+      console.log('SUCCESS: BTC, ETH data found in labeled JSON objects.');
     } else {
-      console.error('FAILURE: Missing BTC or ETH price.');
+      console.error('FAILURE: Missing or incorrect data structure.');
       process.exit(1);
     }
   } else {

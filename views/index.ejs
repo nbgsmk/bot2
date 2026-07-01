@@ -14,12 +14,11 @@
         <thead>
           <tr>
             <th>Timestamp</th>
-            <th>BTC Price (USDT)</th>
-            <th>BTC Vol (<%= windowSize %>)</th>
-            <th>BTC Num Trades</th>
-            <th>ETH Price (USDT)</th>
-            <th>ETH Vol (<%= windowSize %>)</th>
-            <th>ETH Num Trades</th>
+            <% symbols.forEach(function(s) { %>
+              <th><%= s.replace('USDT', '') %> Price (USDT)</th>
+              <th><%= s.replace('USDT', '') %> Vol (<%= windowSize %>)</th>
+              <th><%= s.replace('USDT', '') %> Num Trades</th>
+            <% }); %>
           </tr>
         </thead>
 
@@ -28,12 +27,20 @@
           <% [...history].reverse().forEach(function(entry) { %>
             <tr>
               <td><%= entry.timestamp %></td>
-              <td><%= Number(entry.btc_close).toFixed(displayDecimals) %></td>
-              <td><%= Number(entry.btc_volume).toFixed(displayDecimals) %></td>
-              <td><%= entry.btc_tradeCount %></td>
-              <td><%= Number(entry.eth_close).toFixed(displayDecimals) %></td>
-              <td><%= Number(entry.eth_volume).toFixed(displayDecimals) %></td>
-              <td><%= entry.eth_tradeCount %></td>
+              <% symbols.forEach(function(s) { %>
+                <% const data = entry[s]; %>
+                <% if (data && typeof data === 'object' && !Array.isArray(data)) { %>
+                  <td><%= Number(data.close).toFixed(displayDecimals) %></td>
+                  <td><%= Number(data.tradeVolume).toFixed(displayDecimals) %></td>
+                  <td><%= data.tradeCount %></td>
+                <% } else if (data && Array.isArray(data)) { %>
+                  <td><%= Number(data[3]).toFixed(displayDecimals) %></td>
+                  <td><%= Number(data[5]).toFixed(displayDecimals) %></td>
+                  <td><%= data[6] %></td>
+                <% } else { %>
+                  <td colspan="3" style="text-align: center; color: #999;">Structure changed</td>
+                <% } %>
+              <% }); %>
             </tr>
           <% }); %>
         </tbody>

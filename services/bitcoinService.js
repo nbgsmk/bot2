@@ -69,14 +69,16 @@ async function fetchData() {
     const entry = { timestamp };
     
     results.forEach(res => {
-      const baseSymbol = res.symbol.replace('USDT', '').toLowerCase();
-      entry[`${baseSymbol}_open`] = res.json.openPrice;
-      entry[`${baseSymbol}_high`] = res.json.highPrice;
-      entry[`${baseSymbol}_low`] = res.json.lowPrice;
-      entry[`${baseSymbol}_close`] = res.json.lastPrice;
-      entry[`${baseSymbol}_priceChange`] = res.json.priceChange;
-      entry[`${baseSymbol}_volume`] = res.json.volume;
-      entry[`${baseSymbol}_tradeCount`] = res.json.count;
+      // Store each symbol's data as a separate JSON object with descriptive keys
+      entry[res.symbol] = {
+        open: res.json.openPrice,
+        high: res.json.highPrice,
+        low: res.json.lowPrice,
+        close: res.json.lastPrice,
+        priceChange: res.json.priceChange,
+        tradeVolume: res.json.volume,
+        tradeCount: res.json.count
+      };
     });
 
     history.push(entry);
