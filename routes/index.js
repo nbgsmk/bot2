@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var bitcoinService = require('../services/bitcoinService');
+var tickerFetchService = require('../services/tickerFetchService');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  const history = bitcoinService.getHistory();
-  const config = bitcoinService.config;
+  const history = tickerFetchService.getHistory();
+  const config = tickerFetchService.config;
   
   res.render('index', {
     title: 'Price History',

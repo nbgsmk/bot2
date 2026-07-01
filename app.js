@@ -6,12 +6,12 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var bitcoinService = require('./services/bitcoinService');
+var tickerFetchService = require('./services/tickerFetchService');
 
 var app = express();
 
-// Start Bitcoin price fetching service
-bitcoinService.start();
+// Start ticker price fetching service
+tickerFetchService.start();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

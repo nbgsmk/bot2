@@ -1,9 +1,9 @@
-const bitcoinService = require('../services/bitcoinService');
+const tickerFetchService = require('../services/tickerFetchService');
 
 async function test() {
   console.log('Starting fetch to get raw response...');
   // Call fetchData directly to get the results and log them
-  const results = await bitcoinService.fetchData();
+  const results = await tickerFetchService.fetchData();
   
   if (results) {
     console.log('--- ORIGINAL BINANCE RESPONSES ---');
@@ -18,13 +18,13 @@ async function test() {
   }
 
   // Now check the history
-  const history = bitcoinService.getHistory();
+  const history = tickerFetchService.getHistory();
   console.log('History entries:', history.length);
   if (history.length > 0) {
     const latest = history[history.length - 1];
     console.log('Latest entry in history:', JSON.stringify(latest, null, 2));
     
-    const symbols = bitcoinService.config.symbols;
+    const symbols = tickerFetchService.config.symbols;
     let allOk = true;
 
     symbols.forEach(symbol => {
