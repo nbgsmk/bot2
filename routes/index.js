@@ -5,14 +5,16 @@ var bitcoinService = require('../services/bitcoinService');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   const history = bitcoinService.getHistory();
-  const symbol = bitcoinService.config.symbol || 'BTCUSDT';
-  // const intervalSeconds = Math.round((bitcoinService.config.fetchIntervalSeconds || 1000) / 1000);
-  const intervalSeconds = Number( ( (bitcoinService.config.fetchIntervalSeconds * 1000) || 1000) / 60000 ).toFixed(2);
+  const config = bitcoinService.config;
+  
+  // Convert interval to minutes for display
+  const intervalMinutes = Number(((config.fetchIntervalSeconds * 1000) || 1000) / 60000).toFixed(config.displayDecimals);
+  
   res.render('index', {
-    title: `${symbol} Price History`,
+    title: 'Price History',
     history: history,
-    intervalMinutes: intervalSeconds,
-    symbol: symbol
+	  intervalMinutes: intervalMinutes,
+    displayDecimals: config.displayDecimals
   });
 });
 

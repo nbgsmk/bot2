@@ -1,5 +1,6 @@
 {
   "fetchIntervalSeconds": 10,
-  "symbol": "BTCUSDT",
-  "historyLimit": 100
+  "symbols": ["BTCUSDT", "ETHUSDT"],
+  "historyLimit": 100,
+  "displayDecimals": 2
 }
