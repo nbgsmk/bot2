@@ -17,6 +17,7 @@ class ConfigService {
     // Sanitization and Default Values
     this.fetchIntervalSeconds = this._validateNumber(rawConfig.fetchIntervalSeconds, 10);
     this.symbols = Array.isArray(rawConfig.symbols) ? rawConfig.symbols : ['BTCUSDT', 'ETHUSDT'];
+    this.windowSize = typeof rawConfig.windowSize === 'string' ? rawConfig.windowSize : '24h';
     this.historyLimit = this._validateNumber(rawConfig.historyLimit, 100);
     this.displayDecimals = this._validateNumber(rawConfig.displayDecimals, 2);
   }

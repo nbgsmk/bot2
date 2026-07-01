@@ -6,7 +6,7 @@
   </head>
   <body>
     <h1><%= title %></h1>
-    <p>History of BTC and ETH prices and volume (updated every <%= intervalMinutes %> minutes)</p>
+    <p>History of BTC and ETH prices, volume, and trade count (window: <%= windowSize %>, updated every <%= intervalMinutes %> minutes)</p>
     
     <% if (history && history.length > 0) { %>
       <table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
@@ -14,9 +14,11 @@
           <tr>
             <th>Timestamp</th>
             <th>BTC Price (USDT)</th>
-            <th>BTC 24h Volume</th>
+            <th>BTC Vol (<%= windowSize %>)</th>
+            <th>BTC Trades</th>
             <th>ETH Price (USDT)</th>
-            <th>ETH 24h Volume</th>
+            <th>ETH Vol (<%= windowSize %>)</th>
+            <th>ETH Trades</th>
           </tr>
         </thead>
         <tbody>
@@ -25,8 +27,10 @@
               <td><%= entry.timestamp %></td>
               <td><%= Number(entry.btcPrice).toFixed(displayDecimals) %></td>
               <td><%= Number(entry.btcVolume).toFixed(displayDecimals) %></td>
+              <td><%= entry.btcTrades %></td>
               <td><%= Number(entry.ethPrice).toFixed(displayDecimals) %></td>
               <td><%= Number(entry.ethVolume).toFixed(displayDecimals) %></td>
+              <td><%= entry.ethTrades %></td>
             </tr>
           <% }); %>
         </tbody>

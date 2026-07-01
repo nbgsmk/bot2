@@ -13,8 +13,8 @@ async function test() {
   if (history.length > 0) {
     const latest = history[0];
     console.log('Latest entry:', JSON.stringify(latest, null, 2));
-    if (latest.btcPrice && latest.ethPrice) {
-      console.log('SUCCESS: Both BTC and ETH prices found.');
+    if (latest.btcPrice && latest.ethPrice && latest.btcTrades !== undefined) {
+      console.log('SUCCESS: BTC, ETH prices and trade counts found.');
     } else {
       console.error('FAILURE: Missing BTC or ETH price.');
       process.exit(1);

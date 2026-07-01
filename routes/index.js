@@ -11,7 +11,8 @@ router.get('/', function(req, res, next) {
     title: 'Price History',
     history: history,
     intervalMinutes: config.intervalMinutes,
-    displayDecimals: config.displayDecimals
+    displayDecimals: config.displayDecimals,
+    windowSize: config.windowSize
   });
 });
 

@@ -10,7 +10,7 @@ async function fetchData() {
   try {
     const promises = symbols.map(symbol => {
       return new Promise((resolve, reject) => {
-        https.get(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`, (res) => {
+        https.get(`https://api.binance.com/api/v3/ticker?symbol=${symbol}&windowSize=${config.windowSize}`, (res) => {
           let data = '';
           res.on('data', (chunk) => {
             data += chunk;
@@ -36,6 +36,7 @@ async function fetchData() {
       const baseSymbol = res.symbol.replace('USDT', '').toLowerCase();
       entry[`${baseSymbol}Price`] = res.json.lastPrice;
       entry[`${baseSymbol}Volume`] = res.json.volume;
+      entry[`${baseSymbol}Trades`] = res.json.count;
     });
 
     history.push(entry);
