@@ -91,6 +91,7 @@ async function fetchData() {
     
     saveHistory();
     console.log(`[${timestamp}] Stored data for ${symbols.join(', ')}`);
+    return results; // Return the raw results for debugging/testing
   } catch (err) {
     console.error('Error fetching from Binance:', err.message);
   }
@@ -110,6 +111,7 @@ function getHistory() {
 
 module.exports = {
   start,
+  fetchData,
   getHistory,
   config
 };
