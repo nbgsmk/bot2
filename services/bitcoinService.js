@@ -1,10 +1,10 @@
 const https = require('https');
-const config = require('../config.json');
+const config = require('./configService');
 
 const history = [];
 
 async function fetchData() {
-  const symbols = config.symbols || ['BTCUSDT', 'ETHUSDT'];
+  const symbols = config.symbols;
   const timestamp = new Date().toISOString();
   
   try {
@@ -41,7 +41,7 @@ async function fetchData() {
     history.push(entry);
     
     // Keep history within limit defined in config
-    const limit = config.historyLimit || 100;
+    const limit = config.historyLimit;
     if (history.length > limit) {
       history.shift();
     }
@@ -54,9 +54,8 @@ async function fetchData() {
 function start() {
   // Fetch immediately on start
   fetchData();
-  // Fetch at interval defined in config (default 10 minutes)
-  const interval = (config.fetchIntervalSeconds || 60) * 1000;
-  setInterval(fetchData, interval);
+  // Fetch at interval defined in config
+  setInterval(fetchData, config.fetchIntervalMs);
 }
 
 function getHistory() {
