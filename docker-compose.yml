@@ -1,0 +1,13 @@
+services:
+  binance-bot:                      # app domain, used for DNS between containers
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - historical-data:/app/historical-data
+    restart: unless-stopped
+
+volumes:
+  historical-data:
