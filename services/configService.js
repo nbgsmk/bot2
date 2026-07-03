@@ -20,7 +20,7 @@ class ConfigService {
     this.windowSize = typeof rawConfig.windowSize === 'string' ? rawConfig.windowSize : '24h';
     this.historyLimit = this._validateNumber(rawConfig.historyLimit, 100);
     this.displayDecimals = this._validateNumber(rawConfig.displayDecimals, 2);
-    this.historyFolder = typeof rawConfig.historyFolder === 'string' ? rawConfig.historyFolder : '';
+    this.historyFolder = this._validateHistoryFolder(typeof rawConfig.historyFolder === 'string' ? rawConfig.historyFolder : '');
 
 
 	  if (typeof rawConfig.historyData_json == 'string' && rawConfig.historyData_json.trim() !== '') {
@@ -43,16 +43,32 @@ class ConfigService {
     return (!isNaN(num) && num >= 0) ? num : defaultValue;
   }
 
+  _validateHistoryFolder(folder) {
+    if (!folder || folder.trim() === '') return '';
+    
+    const projectRoot = path.resolve(__dirname, '../');
+    const resolvedPath = path.resolve(projectRoot, folder);
+    const relative = path.relative(projectRoot, resolvedPath);
+
+    // If relative path starts with '..' it means it is higher than the root
+    // If path.isAbsolute(relative) it means it's on a completely different drive/root (mostly Windows)
+    if (relative.startsWith('..') || path.isAbsolute(relative)) {
+      throw new Error(`Error in config: 'historyFolder' (${folder}) points to a location higher than or outside the project root.`);
+    }
+    
+    return folder;
+  }
+
   get historyFilePath_json() {
-    return path.join(__dirname, '../', this.historyFolder, this.historyData_json);
+    return path.resolve(__dirname, '../', this.historyFolder, this.historyData_json);
   }
 
   get historyFilePath_csv() {
-    return path.join(__dirname, '../', this.historyFolder, this.historyData_csv);
+    return path.resolve(__dirname, '../', this.historyFolder, this.historyData_csv);
   }
 
   get historyFolderPath() {
-    return path.join(__dirname, '../', this.historyFolder);
+    return path.resolve(__dirname, '../', this.historyFolder);
   }
 
   ensureHistoryFolder() {

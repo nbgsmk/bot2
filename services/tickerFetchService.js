@@ -119,6 +119,8 @@ function saveHistory_Csv(entry) {
 }
 
 // Initialize history on module load
+console.log(`[INIT] History storage folder: ${config.historyFolderPath}`);
+console.log(`[INIT] History CSV file: ${config.historyFilePath_csv}`);
 // loadHistory_Json();
 loadHistory_Csv();
 
