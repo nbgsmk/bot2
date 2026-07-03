@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./configService');
 
-const getHistoryFilePath_Json = () => path.join(__dirname, '../', config.historyData_json);
-const getHistoryFilePath_Csv = () => path.join(__dirname, '../', config.historyData_csv);
+const getHistoryFilePath_Json = () => config.historyFilePath_json;
+const getHistoryFilePath_Csv = () => config.historyFilePath_csv;
 
 let history = [];
 
@@ -20,7 +20,7 @@ function loadHistory_Json() {
       console.log(`[INIT] Loaded ${history.length} entries from ${filePath}`);
     }
   } catch (err) {
-    console.warn(`Warning: Could not load ${config.historyFileJson}, starting with empty history.`, err.message);
+    console.warn(`Warning: Could not load ${filePath}, starting with empty history.`, err.message);
     history = [];
   }
 }
@@ -31,9 +31,52 @@ function loadHistory_Json() {
 function saveHistory_Json() {
   const filePath = getHistoryFilePath_Json();
   try {
+    config.ensureHistoryFolder();
     fs.writeFileSync(filePath, JSON.stringify(history, null, 2));
   } catch (err) {
-    console.error(`Error saving history file ${config.historyFileJson}:`, err.message);
+    console.error(`Error saving history file ${filePath}:`, err.message);
+  }
+}
+
+/**
+ * Loads history from the CSV file if it exists
+ */
+function loadHistory_Csv() {
+  const filePath = getHistoryFilePath_Csv();
+  try {
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, 'utf8');
+      const lines = data.trim().split('\n');
+      if (lines.length < 2) return;
+
+      const symbols = config.symbols;
+      const newHistory = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',');
+        if (values.length < 2) continue;
+
+        const entry = { timestamp: values[0] };
+        symbols.forEach((s, symbolIdx) => {
+          const startIdx = 1 + symbolIdx * 6;
+          if (values.length >= startIdx + 6) {
+            entry[s] = {
+              open: values[startIdx],
+              high: values[startIdx + 1],
+              low: values[startIdx + 2],
+              close: values[startIdx + 3],
+              tradeVolume: values[startIdx + 4],
+              tradeCount: values[startIdx + 5]
+            };
+          }
+        });
+        newHistory.push(entry);
+      }
+      history = newHistory;
+      console.log(`[INIT] Loaded ${history.length} entries from CSV ${filePath}`);
+    }
+  } catch (err) {
+    console.warn(`Warning: Could not load CSV ${filePath}:`, err.message);
   }
 }
 
@@ -42,6 +85,7 @@ function saveHistory_Json() {
  */
 function saveHistory_Csv(entry) {
   const filePath = getHistoryFilePath_Csv();
+  config.ensureHistoryFolder();
   const symbols = config.symbols;
   const isNewFile = !fs.existsSync(filePath);
 
@@ -70,12 +114,13 @@ function saveHistory_Csv(entry) {
 
     fs.appendFileSync(filePath, csvLine);
   } catch (err) {
-    console.error(`Error appending to CSV file ${config.historyFileCsv}:`, err.message);
+    console.error(`Error appending to CSV file ${filePath}:`, err.message);
   }
 }
 
 // Initialize history on module load
 // loadHistory_Json();
+loadHistory_Csv();
 
 async function fetchData() {
   const symbols = config.symbols;

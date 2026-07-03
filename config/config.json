@@ -3,6 +3,7 @@
   "symbols": ["BTCUSDT", "ETHUSDT"],
     "windowSize": "5m",
     "historyLimit": 100,
+    "historyFolder": "historical-data/",
     "historyData_json": "trade_history.json",
     "historyData_csv": "trade_history.csv",
     "displayDecimals": 2

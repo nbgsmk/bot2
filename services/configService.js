@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 class ConfigService {
   constructor() {
@@ -19,6 +20,7 @@ class ConfigService {
     this.windowSize = typeof rawConfig.windowSize === 'string' ? rawConfig.windowSize : '24h';
     this.historyLimit = this._validateNumber(rawConfig.historyLimit, 100);
     this.displayDecimals = this._validateNumber(rawConfig.displayDecimals, 2);
+    this.historyFolder = typeof rawConfig.historyFolder === 'string' ? rawConfig.historyFolder : '';
 
 
 	  if (typeof rawConfig.historyData_json == 'string' && rawConfig.historyData_json.trim() !== '') {
@@ -39,6 +41,25 @@ class ConfigService {
     const num = Number(value);
     // Ensure it's a valid number and positive
     return (!isNaN(num) && num >= 0) ? num : defaultValue;
+  }
+
+  get historyFilePath_json() {
+    return path.join(__dirname, '../', this.historyFolder, this.historyData_json);
+  }
+
+  get historyFilePath_csv() {
+    return path.join(__dirname, '../', this.historyFolder, this.historyData_csv);
+  }
+
+  get historyFolderPath() {
+    return path.join(__dirname, '../', this.historyFolder);
+  }
+
+  ensureHistoryFolder() {
+    const folderPath = this.historyFolderPath;
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
   }
 
   /**
