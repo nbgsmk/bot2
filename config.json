@@ -1,9 +1,0 @@
-{
-  "fetchIntervalSeconds": 10,
-  "symbols": ["BTCUSDT", "ETHUSDT"],
-    "windowSize": "5m",
-    "historyLimit": 100,
-    "historyFile": "trade_history.json",
-    "csvFile": "trade_history.csv",
-    "displayDecimals": 2
-}

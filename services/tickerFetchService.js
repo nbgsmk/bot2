@@ -3,16 +3,16 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./configService');
 
-const getHistoryFilePath = () => path.join(__dirname, '../', config.historyFileJson);
-const getCsvFilePath = () => path.join(__dirname, '../', config.historyFileCsv);
+const getHistoryFilePath_Json = () => path.join(__dirname, '../', config.historyData_json);
+const getHistoryFilePath_Csv = () => path.join(__dirname, '../', config.historyData_csv);
 
 let history = [];
 
 /**
  * Loads history from the JSON file if it exists
  */
-function loadHistory() {
-  const filePath = getHistoryFilePath();
+function loadHistory_Json() {
+  const filePath = getHistoryFilePath_Json();
   try {
     if (fs.existsSync(filePath)) {
       const data = fs.readFileSync(filePath, 'utf8');
@@ -28,8 +28,8 @@ function loadHistory() {
 /**
  * Saves current history to the JSON file
  */
-function saveHistory() {
-  const filePath = getHistoryFilePath();
+function saveHistory_Json() {
+  const filePath = getHistoryFilePath_Json();
   try {
     fs.writeFileSync(filePath, JSON.stringify(history, null, 2));
   } catch (err) {
@@ -40,8 +40,8 @@ function saveHistory() {
 /**
  * Appends a single entry to the CSV file
  */
-function saveToCsv(entry) {
-  const filePath = getCsvFilePath();
+function saveHistory_Csv(entry) {
+  const filePath = getHistoryFilePath_Csv();
   const symbols = config.symbols;
   const isNewFile = !fs.existsSync(filePath);
 
@@ -75,7 +75,7 @@ function saveToCsv(entry) {
 }
 
 // Initialize history on module load
-loadHistory();
+// loadHistory_Json();
 
 async function fetchData() {
   const symbols = config.symbols;
@@ -127,8 +127,8 @@ async function fetchData() {
       history.shift();
     }
     
-    saveHistory();
-    saveToCsv(entry);
+    // saveHistory_Json();
+    saveHistory_Csv(entry);
     console.log(`[${timestamp}] Stored data for ${symbols.join(', ')}`);
     return results; // Return the raw results for debugging/testing
   } catch (err) {
