@@ -1,9 +1,9 @@
 {
-  "fetchIntervalSeconds": 5,
+  "fetchIntervalSeconds": 300,
   "symbols": ["BTCUSDT", "ETHUSDT"],
     "windowSize": "5m",
     "historyLimit": 1000000,
-    "historyFolder": "historical-data/",
+    "historyFolder": "public/historical-data/",
     "historyData_json": "trade_history.json",
     "historyData_csv": "trade_history.csv",
     "displayDecimals": 2

@@ -1,12 +1,38 @@
+
+# build with:
+#   docker compose build --no-cache
+# export image:
+#   docker save -o binance-bot.tar binance-bot
+# scp files to remote host
+#   scp blah.tar
+#   scp docker-compose.yaml
+# load image:
+#   docker load -i binance-bot.tar
+# run it
+#   docker compose up -d
+
+###  raspberry pi:
+###  docker build --platform linux/armhf -t binance-bot:latest .
+###  ocker compose up
+###  docker run -d --name my-binance-bot binance-bot-image:latest
+###  docker logs -f my-binance-bot
+
+
+# 1. Define your custom text variable here
+x-config:
+  &app_name "binance-bot"
+
 services:
-  binance-bot:                      # app domain, used for DNS between containers
+  *app_name:                      # value from here also used for DNS between containers
     build: .
+    image: *app_name
+    platform: linux/arm/v7
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
     volumes:
-      - historical-data:/app/historical-data
+      - historical-data:/app/public/historical-data
     restart: unless-stopped
 
 volumes:

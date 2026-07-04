@@ -8,6 +8,12 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var tickerFetchService = require('./services/tickerFetchService');
 
+///////
+const serveIndex = require('serve-index');
+const publicPath = path.join(__dirname, '/public/historical-data');
+///////
+
+
 var app = express();
 
 // Start ticker price fetching service
@@ -25,6 +31,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+////////////////
+// 1. Serves the actual files
+app.use('/public/historical-data', express.static(publicPath));
+// 2. Displays the clickable directory listing structure
+app.use('/public/historical-data', serveIndex(publicPath, { icons: true }));
+////////////////
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
