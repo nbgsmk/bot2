@@ -131,6 +131,29 @@ async function fetchData() {
   try {
     const promises = symbols.map(symbol => {
       return new Promise((resolve, reject) => {
+		  /*
+		  Vracaju OHLC, count of trades
+		  spot
+		  https://api.binance.com/api/v3/ticker?symbol=BTCUSDT&windowSize=5m
+		  futures
+		  https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=5m&limit=1
+
+			?? a ovo?
+			/fapi/v1/continuousKlines
+
+		  futures
+		  https://fapi.binance.com/fapi/v1/aggTrades?symbol=BTCUSDT&interval=5m&limit=1
+				{
+				"a": 3372466479,
+				"p": "62077.20",		price
+				"q": "0.646",			quantity
+				"nq": "0.646",			normalized quantity without RPI trades??
+				"f": 7871903849,		first trade id
+				"l": 7871903851,		last trade id (oduzmi last i frst i to ti je count of trades
+				"T": 1783341433683,		timestamp
+				"m": true				taker or maker
+			  }
+		   */
         https.get(`https://api.binance.com/api/v3/ticker?symbol=${symbol}&windowSize=${config.windowSize}`, (res) => {
           let data = '';
           res.on('data', (chunk) => {
